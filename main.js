@@ -15,9 +15,14 @@ const IPCIDR = require('ip-cidr');
  */
 function getFirstIpAddress(cidrStr, callback) {
 
+// 
+
   // Initialize return arguments for callback
   let firstIpAddress = null;
   let callbackError = null;
+  //Init IPv6 
+  let firstIPv6Address = null;
+  let IPv4IPv6 = {};
 
   // Instantiate an object from the imported class and assign the instance to variable cidr.
   const cidr = new IPCIDR(cidrStr);
@@ -37,12 +42,23 @@ function getFirstIpAddress(cidrStr, callback) {
     // If the passed CIDR is valid, call the object's toArray() method.
     // Notice the destructering assignment syntax to get the value of the first array's element.
     [firstIpAddress] = cidr.toArray(options);
+
+    //My code to calculate IPv4 mapped IPv6 address
+    firstIPv6Address = getIpv4MappedIpv6Address(firstIpAddress);
+    IPv4IPv6 = {
+      "ipv4": firstIpAddress,
+      "ipv6": firstIPv6Address,
+    }
+
+      
+  //  [firstIpAddress].concat(firstIPv6Address);
+
   }
   // Call the passed callback function.
   // Node.js convention is to pass error data as the first argument to a callback.
   // The IAP convention is to pass returned data as the first argument and error
   // data as the second argument to the callback function.
-  return callback(firstIpAddress, callbackError);
+  return callback(IPv4IPv6, callbackError);
 }
 
 /**
@@ -117,7 +133,7 @@ function main() {
       if (error) {
         console.error(`  Error returned from GET request: ${error}`);
       }
-      console.log(`  Response returned from GET request: ${data}`);
+      console.log(`  Response returned from GET request: ${JSON.stringify(data)}`);
     });
   }
   // Iterate over sampleIpv4s and pass the element's value to getIpv4MappedIpv6Address().
