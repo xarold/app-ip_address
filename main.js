@@ -39,7 +39,10 @@ function getFirstIpAddress(cidrStr, callback) {
   let callbackError = null;
   //Init IPv6 
   let firstIPv6Address = null;
-  let IPv4IPv6 = {};
+  let IPv4IPv6 = {
+      "ipv4": null,
+      "ipv6": null,
+  };
 
   // Instantiate an object from the imported class and assign the instance to variable cidr.
   const cidr = new IPCIDR(cidrStr);
